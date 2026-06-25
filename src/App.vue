@@ -13,6 +13,7 @@ const selectedProfileId = ref('');
 const isLiffOpen = ref(false);
 const isSlidesOpen = ref(false);
 const lineChatRef = ref(null);
+const activeMobileTab = ref('patient'); // 'patient' | 'doctor' | 'database'
 
 // 計算當前選取的 Profile
 const currentProfile = computed(() => {
@@ -127,7 +128,7 @@ onMounted(() => {
     <main class="app-container">
       
       <!-- LEFT: LINE Mobile Simulator Frame -->
-      <div class="phone-frame">
+      <div class="phone-frame" :class="{ 'mobile-hidden': activeMobileTab !== 'patient' }">
         <div class="phone-notch">
           <div class="phone-speaker"></div>
           <div class="phone-camera"></div>
@@ -164,15 +165,42 @@ onMounted(() => {
         @select-profile="handleSelectProfile"
         @reset-db="handleResetDatabase"
         @refresh="loadAllData"
+        :class="{ 'mobile-hidden': activeMobileTab !== 'doctor' }"
       />
 
       <!-- BOTTOM FULL-WIDTH: Supabase DB visualizer -->
       <DatabaseViewer 
         :profiles="profiles"
         :records="records"
+        :class="{ 'mobile-hidden': activeMobileTab !== 'database' }"
       />
 
     </main>
+
+    <!-- Mobile Bottom Tab Navigation -->
+    <nav class="mobile-nav">
+      <button 
+        :class="['mobile-nav-item', activeMobileTab === 'patient' ? 'active' : '']" 
+        @click="activeMobileTab = 'patient'"
+      >
+        <span class="mobile-nav-icon">💬</span>
+        <span class="mobile-nav-label">患者 LINE</span>
+      </button>
+      <button 
+        :class="['mobile-nav-item', activeMobileTab === 'doctor' ? 'active' : '']" 
+        @click="activeMobileTab = 'doctor'"
+      >
+        <span class="mobile-nav-icon">🏥</span>
+        <span class="mobile-nav-label">醫師後台</span>
+      </button>
+      <button 
+        :class="['mobile-nav-item', activeMobileTab === 'database' ? 'active' : '']" 
+        @click="activeMobileTab = 'database'"
+      >
+        <span class="mobile-nav-icon">⚡</span>
+        <span class="mobile-nav-label">資料監控</span>
+      </button>
+    </nav>
 
     <!-- Plan slides overlay -->
     <PresentationSlides 

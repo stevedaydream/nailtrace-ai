@@ -17,6 +17,8 @@ const emit = defineEmits(['select-profile', 'reset-db', 'refresh']);
 
 const apiKeyInput = ref(geminiService.getApiKey());
 const showKeySavedMessage = ref(false);
+const isSettingsExpanded = ref(window.innerWidth > 768);
+
 
 const handleSaveApiKey = () => {
   geminiService.saveApiKey(apiKeyInput.value);
@@ -63,34 +65,40 @@ const handleClearApiKey = () => {
 
     <!-- SIMULATION CONTROL BOARD -->
     <div class="control-board">
-      <h3 class="panel-sub-title">⚙️ 模擬器設定面板</h3>
+      <h3 class="panel-sub-title" @click="isSettingsExpanded = !isSettingsExpanded" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+        <span>⚙️ 模擬器設定面板</span>
+        <span class="expand-icon" style="font-size: 0.75rem; color: var(--color-brand);">{{ isSettingsExpanded ? '▲ 收起' : '▼ 展開' }}</span>
+      </h3>
       
-      <!-- API Configuration -->
-      <div class="api-config-box">
-        <label class="form-label">Google Gemini API 金鑰</label>
-        <div class="api-input-row">
-          <input 
-            type="password" 
-            v-model="apiKeyInput" 
-            placeholder="貼入 AI Key 以啟用真實分析..." 
-            class="form-input"
-          />
-          <button class="btn btn-primary" @click="handleSaveApiKey">儲存</button>
+      <!-- Collapsible Container -->
+      <div v-show="isSettingsExpanded" style="margin-top: 0.75rem;">
+        <!-- API Configuration -->
+        <div class="api-config-box">
+          <label class="form-label">Google Gemini API 金鑰</label>
+          <div class="api-input-row">
+            <input 
+              type="password" 
+              v-model="apiKeyInput" 
+              placeholder="貼入 AI Key 以啟用真實分析..." 
+              class="form-input"
+            />
+            <button class="btn btn-primary" @click="handleSaveApiKey">儲存</button>
+          </div>
+          <p v-if="showKeySavedMessage" class="key-success-msg">🟢 金鑰已更新！</p>
+          <div class="api-status-badge">
+            <span v-if="apiKeyInput" class="status-active">
+              🟢 多模態視覺分析模式已開啟
+              <a href="javascript:void(0)" @click="handleClearApiKey" class="clear-key-link">清除</a>
+            </span>
+            <span v-else class="status-demo">🔵 演示模式：免 Key 運行 (使用預設案例)</span>
+          </div>
         </div>
-        <p v-if="showKeySavedMessage" class="key-success-msg">🟢 金鑰已更新！</p>
-        <div class="api-status-badge">
-          <span v-if="apiKeyInput" class="status-active">
-            🟢 多模態視覺分析模式已開啟
-            <a href="javascript:void(0)" @click="handleClearApiKey" class="clear-key-link">清除</a>
-          </span>
-          <span v-else class="status-demo">🔵 演示模式：免 Key 運行 (使用預設案例)</span>
-        </div>
-      </div>
 
-      <!-- Action buttons -->
-      <div class="control-actions">
-        <button class="btn btn-secondary" @click="emit('refresh')" style="flex: 1;">🔄 重整狀態</button>
-        <button class="btn btn-danger" @click="emit('reset-db')">🧹 重置資料庫</button>
+        <!-- Action buttons -->
+        <div class="control-actions">
+          <button class="btn btn-secondary" @click="emit('refresh')" style="flex: 1;">🔄 重整狀態</button>
+          <button class="btn btn-danger" @click="emit('reset-db')">🧹 重置資料庫</button>
+        </div>
       </div>
     </div>
   </div>
@@ -315,5 +323,91 @@ const handleClearApiKey = () => {
 .btn-danger:hover {
   background-color: var(--color-red);
   color: white;
+}
+
+@media (max-width: 768px) {
+  .console-sidebar {
+    height: auto !important;
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  
+  .panel-header {
+    padding: 0.75rem 1rem !important;
+  }
+
+  .patient-list {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    padding: 0.75rem 1rem !important;
+    gap: 0.75rem !important;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .patient-item {
+    flex: 0 0 auto !important;
+    border-left: none !important;
+    border-bottom: 3px solid transparent !important;
+    padding: 0.5rem 0.875rem !important;
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+    width: 140px !important;
+  }
+  
+  .patient-item.active {
+    background: rgba(0, 242, 254, 0.05) !important;
+    border-bottom-color: var(--color-brand) !important;
+    border-color: var(--color-brand) !important;
+  }
+
+  .patient-main-info {
+    width: 100% !important;
+  }
+
+  .patient-name {
+    font-size: 0.9rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .patient-id {
+    font-size: 0.7rem !important;
+  }
+
+  .patient-meta-info {
+    width: 100% !important;
+    justify-content: space-between !important;
+    margin-top: 2px !important;
+    gap: 4px !important;
+  }
+
+  .doctor-tag {
+    font-size: 0.65rem !important;
+    padding: 1px 4px !important;
+  }
+
+  .control-board {
+    padding: 0.75rem 1rem !important;
+    background-color: var(--bg-secondary) !important;
+    border-top: 1px solid var(--border-color) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    margin: 0.5rem 0 !important;
+  }
+
+  .api-config-box {
+    padding: 0.6rem !important;
+    margin-bottom: 0.75rem !important;
+    background-color: var(--bg-primary) !important;
+  }
 }
 </style>

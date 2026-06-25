@@ -83,20 +83,8 @@ onUnmounted(() => {
     <!-- Slides Control Bar -->
     <header class="slides-header">
       <div class="header-left">
-        <span class="badge-role">💻 開發團隊 ➔ 黃主任匯報版 (5分鐘)</span>
+        <span class="badge-role">專案計畫介紹與開發時程</span>
         <span class="slide-progress-text">投影片 {{ currentSlide + 1 }} / {{ slidesCount }}</span>
-      </div>
-      
-      <!-- Interactive timer for rehearsing 5 min presentation -->
-      <div class="header-center">
-        <div class="presentation-timer" :class="{ 'timer-warning': timeLeft < 60 }">
-          <span class="timer-icon">⏱️</span>
-          <span class="timer-display font-display">{{ formatTime(timeLeft) }}</span>
-          <button class="btn-timer-toggle" @click="toggleTimer">
-            {{ timerActive ? '暫停' : '開始計時' }}
-          </button>
-          <button class="btn-timer-reset" @click="resetTimer">重置</button>
-        </div>
       </div>
       
       <div class="header-right">
@@ -125,8 +113,8 @@ onUnmounted(() => {
                 <span class="meta-val">皮膚科 黃愉真 主任</span>
               </div>
               <div class="meta-item">
-                <span class="meta-label">報告人</span>
-                <span class="meta-val">系統開發團隊 (外包工程師)</span>
+                <span class="meta-label">開發單位</span>
+                <span class="meta-val">系統工程研發團隊</span>
               </div>
               <div class="meta-item">
                 <span class="meta-label">時程期程</span>
@@ -135,7 +123,7 @@ onUnmounted(() => {
             </div>
             
             <div class="cover-footer">
-              <span class="accent-text">💡 報告重點：系統功能實作技術架構、12個月開發里程碑、以及需要醫療團隊配合的關鍵節點。</span>
+              <span class="accent-text">報告重點：系統功能實作技術架構、12個月開發里程碑、以及需要醫療團隊配合的關鍵節點。</span>
             </div>
           </div>
         </div>
@@ -144,12 +132,12 @@ onUnmounted(() => {
       <!-- Slide 2: Technical Architecture -->
       <Transition name="fade">
         <div v-if="currentSlide === 1" class="slide-content two-col-slide">
-          <h2 class="slide-title font-display">🛠️ 系統技術落實與 MVP 架構</h2>
+          <h2 class="slide-title font-display">系統技術落實與 MVP 架構</h2>
           
           <div class="grid-container">
             <!-- Left: Frontend Integration -->
             <div class="grid-col glass-panel border-cyan">
-              <h3 class="col-title text-cyan">📱 LINE 官方帳號 × LIFF 前端</h3>
+              <h3 class="col-title text-cyan">LINE 官方帳號 × LIFF 前端</h3>
               <ul class="points-list">
                 <li>
                   <strong>無縫身分與隱私綁定</strong>
@@ -168,7 +156,7 @@ onUnmounted(() => {
 
             <!-- Right: Backend & AI -->
             <div class="grid-col glass-panel">
-              <h3 class="col-title text-purple">💻 雲端後台與 Gemini AI 智慧客服</h3>
+              <h3 class="col-title text-purple">雲端後台與 Gemini AI 智慧客服</h3>
               <ul class="points-list">
                 <li>
                   <strong>Supabase 雲端資料庫</strong>
@@ -195,7 +183,7 @@ onUnmounted(() => {
       <!-- Slide 3: Execution Timeline & Milestones -->
       <Transition name="fade">
         <div v-if="currentSlide === 2" class="slide-content timeline-slide">
-          <h2 class="slide-title font-display">📅 系統開發時程規劃 (12個月)</h2>
+          <h2 class="slide-title font-display">系統開發時程規劃 (12個月)</h2>
           
           <!-- Gantt chart simulation -->
           <div class="gantt-wrapper glass-panel">
@@ -274,19 +262,19 @@ onUnmounted(() => {
             <!-- Milestones markers -->
             <div class="milestones-row">
               <div class="milestone-box" style="left: 25%;">
-                <span class="ms-marker">🚩</span>
+                <span class="ms-marker"></span>
                 <span class="ms-text"><strong>M3 (SD定案):</strong> 系統規格書與資料結構簽約</span>
               </div>
               <div class="milestone-box" style="left: 50%;">
-                <span class="ms-marker">🚩</span>
+                <span class="ms-marker"></span>
                 <span class="ms-text"><strong>M6 (AI就緒):</strong> FAQ 對答與 API 回覆成功率達 90%</span>
               </div>
               <div class="milestone-box" style="left: 67%;">
-                <span class="ms-marker">🚩</span>
+                <span class="ms-marker"></span>
                 <span class="ms-text"><strong>M8 (上線測試):</strong> 系統整體整合，開啟門診 Demo</span>
               </div>
               <div class="milestone-box" style="left: 100%;">
-                <span class="ms-marker">🚩</span>
+                <span class="ms-marker"></span>
                 <span class="ms-text"><strong>M12 (系統交付):</strong> 完成原始碼交付及教育訓練</span>
               </div>
             </div>
@@ -297,13 +285,13 @@ onUnmounted(() => {
       <!-- Slide 4: Action Items for Medical Team -->
       <Transition name="fade">
         <div v-if="currentSlide === 3" class="slide-content structure-slide">
-          <h2 class="slide-title font-display">🤝 臨床端 (黃主任團隊) 關鍵配合事項</h2>
+          <h2 class="slide-title font-display">臨床醫療團隊關鍵配合事項</h2>
           
           <div class="flow-container">
             
             <!-- Step 1: M1-M3 -->
             <div class="flow-card glass-panel flex-1">
-              <div class="card-icon">📁 階段一 (M1 - M3)：素材準備</div>
+              <div class="card-icon">階段一 (M1 - M3)：素材準備</div>
               <ul class="flow-details">
                 <li><strong>臨床問卷結構</strong>：確定 VAS 疼痛量表及 questionnaire 題目（異物感、發炎等）。</li>
                 <li><strong>常見問答集 (FAQ)</strong>：收集 30-50 題病人常見的指甲矯正疑問，用於 AI 知識庫訓練。</li>
@@ -312,23 +300,23 @@ onUnmounted(() => {
             </div>
 
             <!-- Arrow -->
-            <div class="flow-arrow">➡️</div>
+            <div class="flow-arrow">→</div>
 
             <!-- Step 2: M4-M6 -->
             <div class="flow-card glass-panel flex-1 border-yellow">
-              <div class="card-icon">🧪 階段二 (M4 - M6)：AI 與介面測試</div>
+              <div class="card-icon">階段二 (M4 - M6)：AI 與介面測試</div>
               <ul class="flow-details">
-                <li><strong>LIFF 介面易用性走查</strong>：由護理人員測試前端操作流程是否流暢。</li>
+                <li><strong>LIFF 介面易用性走查</strong>：由護理人員測試前端操作流程是否流暢.</li>
                 <li><strong>AI 對答校正</strong>：協助測試 Gemini 衛教助理的回覆內容，確保醫學知識準確度，防止 AI 幻覺。</li>
               </ul>
             </div>
 
             <!-- Arrow -->
-            <div class="flow-arrow">➡️</div>
+            <div class="flow-arrow">→</div>
 
             <!-- Step 3: M9-M12 -->
             <div class="flow-card glass-panel flex-1">
-              <div class="card-icon">🚀 階段三 (M9 - M12)：門診試辦</div>
+              <div class="card-icon">階段三 (M9 - M12)：門診試辦</div>
               <ul class="flow-details">
                 <li><strong>個案甄詢與綁定</strong>：門診徵得患者同意後引入系統，目標試辦期間達 50 例以上。</li>
                 <li><strong>後台使用反饋</strong>：醫師與護理師對三色燈號及審閱後台的交互體驗提出修改建議。</li>
@@ -342,12 +330,12 @@ onUnmounted(() => {
       <!-- Slide 5: Expected Deliverables & Value -->
       <Transition name="fade">
         <div v-if="currentSlide === 4" class="slide-content summary-slide">
-          <h2 class="slide-title font-display">🎁 預期交付物與專案效益</h2>
+          <h2 class="slide-title font-display">預期交付物與專案效益</h2>
           
           <div class="grid-container">
             <!-- Left: Expected Metrics -->
             <div class="grid-col glass-panel">
-              <h3 class="col-title text-green">📦 系統交付物清單</h3>
+              <h3 class="col-title text-green">系統交付物清單</h3>
               <ul class="points-list">
                 <li>
                   <strong>LINE @ LIFF 網頁端應用程式</strong>
@@ -370,7 +358,7 @@ onUnmounted(() => {
 
             <!-- Right: Value Proposition -->
             <div class="grid-col glass-panel border-purple">
-              <h3 class="col-title text-purple">💡 對本計畫全人評鑑之加分效益</h3>
+              <h3 class="col-title text-purple">對本計畫全人評鑑之加分效益</h3>
               <ul class="points-list">
                 <li>
                   <strong>全人醫療服務創新性</strong>
@@ -389,7 +377,7 @@ onUnmounted(() => {
           </div>
           
           <div class="discussion-footer">
-            <span>🗣️ <strong>與黃主任討論重點：</strong> M1 階段的問卷與 FAQ 素材是否能於第一個月底前提供？是否有其他科部（如整形外科）術後照護也需納入初期欄位考量？</span>
+            <span>🗣️ <strong>臨床合作討論要點：</strong> M1 階段的問卷與 FAQ 素材是否能於第一個月底前提供？是否有其他科部（如整形外科）術後照護也需納入初期欄位考量？</span>
           </div>
         </div>
       </Transition>
@@ -399,11 +387,11 @@ onUnmounted(() => {
     <!-- Slide Navigation Footer -->
     <footer class="slides-footer">
       <div class="footer-left">
-        <span class="hotkey-tip">💡 提示: 可使用鍵盤 左右方向鍵(←/→) 進行投影片切換，ESC 鍵退出</span>
+        <span class="hotkey-tip">提示: 可使用鍵盤 左右方向鍵(←/→) 進行投影片切換，ESC 鍵退出</span>
       </div>
       
       <div class="footer-center">
-        <button class="btn-nav" @click="prevSlide" :disabled="currentSlide === 0">◀ 上一頁</button>
+        <button class="btn-nav" @click="prevSlide" :disabled="currentSlide === 0">&lt; 上一頁</button>
         <div class="nav-dots">
           <span 
             v-for="(s, index) in slidesCount" 
@@ -412,17 +400,10 @@ onUnmounted(() => {
             @click="goToSlide(index)"
           ></span>
         </div>
-        <button class="btn-nav" @click="nextSlide" :disabled="currentSlide === slidesCount - 1">下一頁 ▶</button>
+        <button class="btn-nav" @click="nextSlide" :disabled="currentSlide === slidesCount - 1">下一頁 &gt;</button>
       </div>
 
-      <div class="footer-right">
-        <!-- Presentation action guides -->
-        <span class="slide-key-concept" v-if="currentSlide === 0">🎤 開場 (1分鐘)：自我介紹與專案定位</span>
-        <span class="slide-key-concept" v-if="currentSlide === 1">🎤 技術 (1分鐘)：說明前端相機與 AI 客服的技術實作</span>
-        <span class="slide-key-concept" v-if="currentSlide === 2">🎤 時程 (1分鐘)：說明 12 個月進度與關鍵查核點</span>
-        <span class="slide-key-concept" v-if="currentSlide === 3">🎤 協作 (1分鐘)：條列需要黃主任團隊提供之醫療素材</span>
-        <span class="slide-key-concept" v-if="currentSlide === 4">🎤 結尾 (1分鐘)：盤點預期交付物，討論 M1 配合項目</span>
-      </div>
+      <div class="footer-right"></div>
     </footer>
   </div>
 </template>
@@ -1014,5 +995,168 @@ onUnmounted(() => {
   0% { opacity: 0.8; }
   50% { opacity: 1; transform: scale(1.02); }
   100% { opacity: 0.8; }
+}
+
+@media (max-width: 768px) {
+  .slides-header {
+    padding: 0 1rem !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .badge-role {
+    font-size: 0.7rem !important;
+    padding: 2px 8px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+  }
+  
+  .presentation-timer {
+    padding: 2px 8px !important;
+    gap: 4px !important;
+  }
+  
+  .timer-display {
+    font-size: 0.9rem !important;
+    min-width: auto !important;
+  }
+  
+  .btn-timer-toggle, .btn-timer-reset {
+    font-size: 0.65rem !important;
+    padding: 1px 4px !important;
+  }
+  
+  .btn-close-slides {
+    padding: 4px 10px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .slide-canvas {
+    padding: 1rem 0.75rem !important;
+    height: calc(100vh - 120px) !important;
+    overflow-y: auto !important;
+    display: block !important;
+  }
+
+  .slide-content {
+    position: relative !important;
+    height: auto !important;
+    min-height: 100% !important;
+    justify-content: flex-start !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    padding-bottom: 2rem !important;
+  }
+
+  .slide-title {
+    font-size: 1.4rem !important;
+    margin-bottom: 1rem !important;
+    padding-left: 10px !important;
+  }
+
+  /* Cover Slide Mobile */
+  .cover-wrapper {
+    padding: 1.5rem !important;
+  }
+  
+  .cover-title {
+    font-size: 1.6rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  .cover-subtitle {
+    font-size: 1.05rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+  
+  .divider {
+    margin: 1.25rem 0 !important;
+  }
+  
+  .cover-meta {
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .meta-val {
+    font-size: 0.95rem !important;
+  }
+  
+  .cover-footer {
+    padding: 8px 12px !important;
+  }
+  
+  .accent-text {
+    font-size: 0.78rem !important;
+  }
+
+  /* Two Column Slide Mobile */
+  .grid-container {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  .grid-col {
+    padding: 1.25rem !important;
+  }
+  
+  .col-title {
+    font-size: 1.1rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Gantt timeline Slide Mobile */
+  .gantt-wrapper {
+    padding: 0.75rem !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .gantt-header, .gantt-rows {
+    min-width: 680px !important;
+  }
+  
+  .milestones-row {
+    display: none !important;
+  }
+
+  /* Flow card Slide Mobile */
+  .flow-container {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+  
+  .flow-arrow {
+    transform: rotate(90deg) !important;
+    justify-content: center !important;
+    margin: 0.25rem 0 !important;
+  }
+  
+  .flow-card {
+    padding: 1.25rem !important;
+  }
+
+  /* Slide Footer Mobile */
+  .slides-footer {
+    padding: 0 1rem !important;
+    font-size: 0.75rem !important;
+    height: 60px !important;
+  }
+  
+  .hotkey-tip {
+    display: none !important;
+  }
+  
+  .btn-nav {
+    padding: 4px 10px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .slide-key-concept {
+    display: none !important;
+  }
 }
 </style>

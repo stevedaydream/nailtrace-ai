@@ -171,4 +171,38 @@ const getTriageBadgeClass = (status) => {
   display: flex;
   flex-direction: column;
 }
+
+@media (max-width: 768px) {
+  .console-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    height: auto !important;
+  }
+
+  .console-main {
+    padding: 1rem !important;
+    height: auto !important;
+    overflow-y: visible !important;
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    background: transparent !important;
+    border-top: 1px solid var(--border-color) !important;
+    box-shadow: none !important;
+  }
+
+  .active-patient-header {
+    padding-bottom: 0.75rem !important;
+  }
+
+  .patient-title-row h1 {
+    font-size: 1.4rem !important;
+  }
+
+  .history-section h2 {
+    font-size: 1rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+}
 </style>

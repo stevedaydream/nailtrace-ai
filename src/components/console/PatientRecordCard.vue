@@ -469,4 +469,11 @@ const splitImages = (url) => {
   margin-top: 4px;
   line-height: 1.4;
 }
+
+@media (max-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+}
 </style>
