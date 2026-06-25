@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onUnmounted } from 'vue';
 import { geminiService } from '../services/gemini';
 import { supabaseService } from '../services/supabase';
 
@@ -21,6 +21,72 @@ const selectedPreset = ref('preset-normal');
 const customImageBase64 = ref('');
 const customImageName = ref('');
 const isUploadingCustom = ref(false);
+
+// 即時相機功能
+const isCameraActive = ref(false);
+const videoRef = ref(null);
+let cameraStream = null;
+
+const startCamera = async () => {
+  try {
+    selectedPreset.value = ''; // 取消預設選取
+    isCameraActive.value = true;
+    
+    // 請求後置鏡頭 (facingMode: 'environment')，並要求理想的 1:1 視訊解析度
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { 
+        facingMode: 'environment',
+        width: { ideal: 1080 },
+        height: { ideal: 1080 }
+      }
+    });
+    cameraStream = stream;
+    // 稍等以確保 video 元素在 DOM 中被渲染
+    setTimeout(() => {
+      if (videoRef.value) {
+        videoRef.value.srcObject = stream;
+      }
+    }, 100);
+  } catch (err) {
+    console.error('Failed to open camera:', err);
+    alert('無法啟用即時相機，系統將自動使用檔案上傳模式！(請確認是否已給予相機存取權限，或是您所處的網頁環境是否支援 HTTPS)');
+    isCameraActive.value = false;
+  }
+};
+
+const stopCamera = () => {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(track => track.stop());
+    cameraStream = null;
+  }
+  isCameraActive.value = false;
+};
+
+const capturePhoto = () => {
+  if (!videoRef.value) return;
+  
+  const video = videoRef.value;
+  const canvas = document.createElement('canvas');
+  
+  // 使用視訊實際的寬高進行擷取，確保相片解析度不受畫面顯示比例縮減
+  canvas.width = video.videoWidth || 640;
+  canvas.height = video.videoHeight || 640;
+  
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+  // 輸出 Base64 格式的 JPEG 資料
+  const capturedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+  customImageBase64.value = capturedBase64;
+  customImageName.value = `toe-capture-${Date.now()}.jpg`;
+  selectedPreset.value = ''; // 取消預設相片
+  
+  stopCamera();
+};
+
+onUnmounted(() => {
+  stopCamera();
+});
 
 const isSubmitting = ref(false);
 const submitStatusText = ref('');
@@ -322,14 +388,19 @@ const handleSubmit = async () => {
 
           <div class="divider-text"><span>或 上傳自訂照片</span></div>
 
-          <!-- Single Custom File Uploader -->
+          <!-- Single Custom File Uploader & Camera Capture -->
           <div class="single-upload-container">
             <div class="upload-col">
-              <span class="upload-col-label">📸 上傳指甲照片 (Photo)</span>
-              <label class="upload-btn" :class="{ 'has-file': customImageBase64 }">
-                {{ customImageBase64 ? '✓ 已選擇相片' : '選擇指甲相片' }}
-                <input type="file" accept="image/*" @change="handleCustomFrontUpload" style="display:none;" />
-              </label>
+              <span class="upload-col-label">📸 取得指甲照片 (Photo)</span>
+              <div class="upload-actions-row">
+                <button type="button" class="camera-trigger-btn" @click="startCamera">
+                  即時對齊相機
+                </button>
+                <label class="upload-btn" :class="{ 'has-file': customImageBase64 }">
+                  {{ customImageBase64 ? '✓ 已選取照片' : '從相簿選擇' }}
+                  <input type="file" accept="image/*" @change="handleCustomFrontUpload" style="display:none;" />
+                </label>
+              </div>
               <div v-if="customImageName" class="file-name-tag" :title="customImageName">
                 {{ customImageName }}
               </div>
@@ -382,6 +453,32 @@ const handleSubmit = async () => {
         </div>
       </div>
 
+    </div>
+
+    <!-- Real-time Camera Overlay inside LIFF -->
+    <div v-if="isCameraActive" class="camera-capture-overlay">
+      <div class="camera-viewport-container">
+        <video ref="videoRef" autoplay playsinline class="camera-video"></video>
+        
+        <!-- Semi-transparent nail alignment guide overlay -->
+        <div class="camera-guide-overlay">
+          <svg class="camera-guide-svg" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M120 380 C120 200, 150 100, 200 100 C250 100, 280 200, 280 380" stroke="rgba(0, 242, 254, 0.4)" stroke-width="3" stroke-dasharray="8 6"/>
+            <path d="M150 200 C150 160, 160 140, 200 140 C240 140, 250 160, 250 200 C250 220, 240 230, 200 230 C160 230, 150 220, 150 200 Z" stroke="var(--color-brand)" stroke-width="4" fill="rgba(0, 242, 254, 0.08)"/>
+            <text x="200" y="80" fill="var(--color-brand)" font-size="14" font-weight="bold" text-anchor="middle">請將大拇指對準對齊框</text>
+            <circle cx="200" cy="185" r="5" fill="var(--color-brand)"/>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Camera action controls -->
+      <div class="camera-controls">
+        <button type="button" class="btn-camera-cancel" @click="stopCamera">取消</button>
+        <button type="button" class="btn-camera-shutter" @click="capturePhoto">
+          <span class="shutter-inner"></span>
+        </button>
+        <div class="camera-spacer"></div> <!-- Balanced alignment spacing -->
+      </div>
     </div>
   </div>
 </template>
@@ -968,7 +1065,7 @@ const handleSubmit = async () => {
 
 .single-upload-container .upload-col {
   width: 100%;
-  max-width: 240px;
+  max-width: 320px;
 }
 
 .custom-img-wrapper-full {
@@ -984,5 +1081,129 @@ const handleSubmit = async () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Live Camera Overlay Styling */
+.upload-actions-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.camera-trigger-btn {
+  flex: 1;
+  background-color: var(--color-brand);
+  color: var(--bg-primary);
+  border: 1px solid var(--color-brand);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  font-family: var(--font-sans);
+}
+
+.camera-trigger-btn:hover {
+  background-color: var(--color-brand-hover);
+  box-shadow: 0 0 10px var(--color-brand-glow);
+}
+
+.camera-capture-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.camera-viewport-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-guide-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.camera-guide-svg {
+  width: 80%;
+  max-width: 320px;
+  height: auto;
+}
+
+.camera-controls {
+  height: 100px;
+  background-color: rgba(18, 24, 36, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-camera-cancel {
+  background: transparent;
+  border: none;
+  color: #a5b4fc;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.btn-camera-shutter {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 4px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.shutter-inner {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: white;
+  display: block;
+  transition: transform 0.1s;
+}
+
+.btn-camera-shutter:active .shutter-inner {
+  transform: scale(0.9);
+}
+
+.camera-spacer {
+  width: 48px;
 }
 </style>
